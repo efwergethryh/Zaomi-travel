@@ -6,11 +6,12 @@ class trip_temp extends StatelessWidget {
   late String title;
   late String date;
   late String duration;
+  late String currency;
   trip_temp(
       {required this.title,
       required this.Url,
       required this.date,
-      required this.duration});
+      required this.duration,required this.currency});
 
   @override
   Widget build(BuildContext context) {
@@ -40,9 +41,15 @@ class trip_temp extends StatelessWidget {
               SizedBox(
                 height: 10,
               ),
-              Text(
-                date,
-                style: TextStyle(fontSize: 10.sp),
+              Row(
+                children: [
+                  Text(
+                    date,
+                    style: TextStyle(fontSize: 10.sp),
+                  ),
+                  Spacer(),
+                  Text(currency)
+                ],
               )
             ],
           )

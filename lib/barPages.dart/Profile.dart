@@ -13,12 +13,11 @@ class profile extends StatelessWidget {
         flexibleSpace: FlexibleSpaceBar(
           stretchModes: [StretchMode.zoomBackground],
           background: Image.asset(
-            'assets/pics/Zaomi.jpg',
+            'assets/pics/background.png',
             fit: BoxFit.cover,
           ),
         ),
         expandedHeight: 250.0.h,
-        
         floating: false,
         pinned: true,
       ),
@@ -31,7 +30,7 @@ class profile extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-               // Container(
+              // Container(
               //   decoration: new BoxDecoration(
               //       gradient: new LinearGradient(colors: [
               //     const Color.fromARGB(255, 12, 81, 138),
@@ -116,7 +115,9 @@ class profile extends StatelessWidget {
                 title: Text('Travelling articles'),
               ),
               ListTile(
-                onTap: () {},
+                onTap: () {
+                  Navigator.pushNamed(context, 'splash-screen');
+                },
                 leading: Icon(Icons.local_taxi),
                 title: Text('Airport Taxi'),
               ),

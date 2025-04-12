@@ -28,7 +28,7 @@ class _ZoomOutImageState extends State<ZoomOutImage> {
       child: Transform.scale(
         scale: scaleFactor,
         child: Image.asset(
-          'assets/pics/Zaomi.jpg', // Replace with your image URL
+          'assets/pics/background2.jpg', // Replace with your image URL
           fit: BoxFit.cover,
         ),
       ),

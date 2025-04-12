@@ -419,19 +419,7 @@ class _flight_rentState extends State<flight_rent> {
                                   style: TextStyle(color: Colors.white),
                                 ),
                                 onPressed: () {
-                                  // if (Provider.of<TextProvider>(context,
-                                  //             listen: false)
-                                  //         .searchInput ==
-                                  //     Provider.of<TextProvider>(context,
-                                  //             listen: false)
-                                  //         .searchInputto) {
-                                  //   snackbar.showCustomSnackBar(context,
-                                  //       'Please choose different locations');
-                                  // } else if (selectedDate == null ||
-                                  //     lastDate == null) {
-                                  //   snackbar.showCustomSnackBar(context,
-                                  //       "Please select Depature and arrival date");
-                                  // }
+                               
                                   Navigator.pushNamed(context, 'trips');
                                 },
                               ),

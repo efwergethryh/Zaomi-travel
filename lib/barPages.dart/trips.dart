@@ -22,14 +22,7 @@ class trips extends StatelessWidget {
                     ]),
               );
             }),
-        // children: [
-        //   SpeedDialChild(
-        //     child: const Icon(Icons.add, color: Colors.white),
-        //     label: 'Add a trip',
-        //     backgroundColor: Colors.blueAccent,
-        //     onTap: () {},
-        //   ),
-        // ],
+        
       ),
       body: Center(
         child: Column(

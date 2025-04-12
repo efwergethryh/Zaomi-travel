@@ -4,8 +4,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 
-// import 'package:transportation_application/Templates/trip_temp.dart';
 import 'package:transportation_application/Templates/triptemplate.dart';
+import 'package:transportation_application/requests/request.dart';
 
 class trips extends StatefulWidget {
   trips();
@@ -15,6 +15,9 @@ class trips extends StatefulWidget {
 }
 
 class _tripsState extends State<trips> {
+  // API Configuration
+  static const String baseUrl = 'http://192.168.0.191:7298';
+
   Map<String, dynamic> fileList = Map();
   List<String> titles = [
     'Show all filters',
@@ -22,147 +25,64 @@ class _tripsState extends State<trips> {
     'Stops',
     'Price'
   ];
-  List<tripTemplate> trips = [
-    tripTemplate(
-      date: '20/01/2019 - 20/01/2019',
-      path: 'assets/Cities/IMG-20231215-WA0002.jpg',
-      title: 'Dubai',
-    ),
-    tripTemplate(
-      date: '20/01/2019 - 20/01/2019',
-      path: 'assets/Cities/IMG-20231215-WA0003.jpg',
-      title: 'Dubai',
-    ),
-    tripTemplate(
-      date: '20/01/2019 - 20/01/2019',
-      path: 'assets/Cities/IMG-20231215-WA0004.jpg',
-      title: 'Dubai',
-    ),
-    tripTemplate(
-      date: '20/01/2019 - 20/01/2019',
-      path: 'assets/Cities/IMG-20231215-WA0005.jpg',
-      title: 'Dubai',
-    ),
-    tripTemplate(
-      date: '20/01/2019 - 20/01/2019',
-      path: 'assets/Cities/IMG-20231215-WA0006.jpg',
-      title: 'Dubai',
-    ),
-    tripTemplate(
-      date: '20/01/2019 - 20/01/2019',
-      path: 'assets/Cities/IMG-20231215-WA0007.jpg',
-      title: 'Dubai',
-    ),
-    tripTemplate(
-      date: '20/01/2019 - 20/01/2019',
-      path: 'assets/Cities/IMG-20231215-WA0008.jpg',
-      title: 'Dubai',
-    ),
-    tripTemplate(
-      date: '20/01/2019 - 20/01/2019',
-      path: 'assets/Cities/IMG-20231215-WA0009.jpg',
-      title: 'Dubai',
-    ),
-    tripTemplate(
-      date: '20/01/2019 - 20/01/2019',
-      path: 'assets/Cities/IMG-20231215-WA0014.jpg',
-      title: 'Turkey',
-    ),
-    tripTemplate(
-      date: '20/01/2019 - 20/01/2019',
-      path: 'assets/Cities/IMG-20231215-WA0002.jpg',
-      title: 'Dubai',
-    ),
-    tripTemplate(
-      date: '20/01/2019 - 20/01/2019',
-      path: 'assets/Cities/IMG-20231215-WA0003.jpg',
-      title: 'Dubai',
-    ),
-    tripTemplate(
-      date: '20/01/2019 - 20/01/2019',
-      path: 'assets/Cities/IMG-20231215-WA0004.jpg',
-      title: 'Dubai',
-    ),
-    tripTemplate(
-      date: '20/01/2019 - 20/01/2019',
-      path: 'assets/Cities/IMG-20231215-WA0005.jpg',
-      title: 'Dubai',
-    ),
-    tripTemplate(
-      date: '20/01/2019 - 20/01/2019',
-      path: 'assets/Cities/IMG-20231215-WA0006.jpg',
-      title: 'Dubai',
-    ),
-    tripTemplate(
-      date: '20/01/2019 - 20/01/2019',
-      path: 'assets/Cities/IMG-20231215-WA0007.jpg',
-      title: 'Dubai',
-    ),
-    tripTemplate(
-      date: '20/01/2019 - 20/01/2019',
-      path: 'assets/Cities/IMG-20231215-WA0008.jpg',
-      title: 'Dubai',
-    ),
-    tripTemplate(
-      date: '20/01/2019 - 20/01/2019',
-      path: 'assets/Cities/IMG-20231215-WA0009.jpg',
-      title: 'Dubai',
-    ),
-    tripTemplate(
-      date: '20/01/2019 - 20/01/2019',
-      path: 'assets/Cities/IMG-20231215-WA0014.jpg',
-      title: 'Turkey',
-    )
-  ];
-  final Map<String, dynamic> manifestMap = Map();
-  void writePathsToJsonFile() async {
-    try {
-      // Get the app's documents directory
-      Directory appDocDir = await getApplicationDocumentsDirectory();
-      String appDocPath = appDocDir.path;
-
-      // Specify the folder you want to read paths from
-      Directory folder = Directory('$appDocPath/assets/Cities');
-
-      // List all files in the folder
-      List<FileSystemEntity> files = folder.listSync();
-
-      // Extract file paths from the list of files
-      List<String> filePaths =
-          files.where((file) => file is File).map((file) => file.path).toList();
-
-      // Create a JSON map with the file paths
-      Map<String, dynamic> jsonData = {'imagePaths': filePaths};
-
-      // Convert the data to a JSON string
-      String jsonString = json.encode(jsonData);
-
-      // Specify the file path
-      String filePath = '$appDocPath/assets/Cities/cities_manifest.json';
-
-      // Open the file for writing
-      File file = File(filePath);
-      file.writeAsStringSync(jsonString);
-
-      print('File paths written to $filePath');
-    } catch (e) {
-      print('Error writing to file: $e');
-    }
-  }
-
-  Future<void> _loadFiles() async {
-    var assetsFile = await DefaultAssetBundle.of(context)
-        .loadString('assets/Cities/cities_manifest.json');
-    fileList = json.decode(assetsFile);
-  }
+  List<tripTemplate> trips = [];
+  bool isLoading = true;
+  String? errorMessage;
 
   @override
   void initState() {
     super.initState();
-    writePathsToJsonFile();
+    getTrips();
   }
 
-  @override
+  Future<void> getTrips() async {
+    try {
+      setState(() {
+        isLoading = true;
+        errorMessage = null;
+      });
+
+      request req = request();
+      final response = await req.getRequest(
+          '$baseUrl/api/v1/flights/search?origin=JFK&destination=LAX&departureDate=2025-04-1');
+          if (response != null) {
+          var rawData = response['data'];
+          List dataList = [];
+
+          if (rawData is List) {
+            dataList = rawData;
+          } else if (rawData is Map && rawData.containsKey('\$values')) {
+            dataList = rawData['\$values'];
+          }
+          setState(() {
+          trips = dataList
+          .map((item) => tripTemplate(
+                title: item['name'] ?? '',
+                path: item['Image'] ?? '',
+                description: item['Description'] ?? '',
+                Price: item['Price'] ?? '',
+                date: item['ArrivalTime'] ?? '',
+              ))
+        .toList();
+    isLoading = false;
+  });
+
+       
+      }
+    } catch (error) {
+      setState(() {
+        if (error is SocketException) {
+          errorMessage =
+              'Could not connect to the server. Please check if the server is running.';
+        } else {
+          errorMessage = 'Error loading trips: $error';
+        }
+        isLoading = false;
+      });
+      print('Error: $error');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -215,9 +135,7 @@ class _tripsState extends State<trips> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              height: 10,
-            ),
+            SizedBox(height: 10),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
@@ -225,9 +143,7 @@ class _tripsState extends State<trips> {
                     titles.length, (index) => tabb(title: titles[index])),
               ),
             ),
-            SizedBox(
-              height: 10,
-            ),
+            SizedBox(height: 10),
             Text(
               'Available trips',
               style: TextStyle(
@@ -238,21 +154,44 @@ class _tripsState extends State<trips> {
                 height: 0,
               ),
             ),
-            SizedBox(
-              height: 10, 
-            ),
-            SafeArea(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: trips
-                    .map((e) => tripTemplate(
-                          path: e.path,
-                          date: e.date,
-                          title: e.title,
-                        ))
-                    .toList(),
+            SizedBox(height: 10),
+            if (isLoading)
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 10),
+                    Text('Loading trips...',
+                        style: TextStyle(color: Colors.grey)),
+                  ],
+                ),
+              )
+            else if (errorMessage != null)
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(errorMessage!),
+                    SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: getTrips,
+                      child: Text('Retry'),
+                    ),
+                  ],
+                ),
+              )
+            else if (trips.isEmpty)
+              Center(
+                child: Text('No trips available'),
+              )
+            else
+              SafeArea(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: trips,
+                ),
               ),
-            ),
           ],
         ),
       ),

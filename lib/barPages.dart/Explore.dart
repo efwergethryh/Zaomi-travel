@@ -4,11 +4,8 @@ import 'package:transportation_application/Categories/car_rent.dart';
 import 'package:transportation_application/Categories/flight_rent.dart';
 import 'package:transportation_application/Categories/hotel_rent.dart';
 import 'package:transportation_application/Categories/insurance.dart';
-import 'package:transportation_application/Templates/Tab.dart';
-import 'package:transportation_application/Templates/categoryCard.dart';
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
 import 'package:transportation_application/Categories/visa_initial.dart';
-import 'package:transportation_application/my_flutter_app_icons.dart';
 import 'package:transportation_application/zoomOut.dart';
 
 class Explore extends StatefulWidget {
@@ -35,7 +32,6 @@ class _ExploreState extends State<Explore> with TickerProviderStateMixin {
   }
 
   @override
-  @override
   Widget build(BuildContext context) {
     return CustomScrollView(
       physics: BouncingScrollPhysics(),
@@ -46,7 +42,7 @@ class _ExploreState extends State<Explore> with TickerProviderStateMixin {
           flexibleSpace: FlexibleSpaceBar(
             stretchModes: [StretchMode.zoomBackground],
             background: Image.asset(
-              'assets/pics/Zaomi.jpg',
+              'assets/pics/background-text.jpg',
               fit: BoxFit.cover,
             ),
           ),

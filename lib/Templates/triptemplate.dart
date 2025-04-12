@@ -1,17 +1,37 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
-import 'package:transportation_application/my_flutter_app_icons.dart';
+import 'package:transportation_application/Models/trip.dart';
 
 class tripTemplate extends StatelessWidget {
   late String path;
   late String title;
+  late String description;
+  late String name;
   late String date;
-
-  tripTemplate({required this.path, required this.date, required this.title});
+  late int Price;
+  tripTemplate(
+      {required this.path,
+      required this.description,
+      required this.title,
+      required this.Price,
+      required this.date});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        Navigator.push(
+            context,  
+            MaterialPageRoute(
+                builder: (context) => trip(
+                      image: path,
+                      description: description,
+                      title: title,
+                      date: date,
+                      Price: Price,
+                    )));
+      },
       child: Container(
         width: 2500,
         height: 80,
@@ -24,8 +44,9 @@ class tripTemplate extends StatelessWidget {
               width: 80,
               height: 60,
               decoration: BoxDecoration(
+                color: Colors.white,
                 image: DecorationImage(
-                  image: AssetImage(path),
+                  image: NetworkImage(path),
                   fit: BoxFit.fill,
                 ),
               ),
@@ -41,12 +62,15 @@ class tripTemplate extends StatelessWidget {
                 ),
                 Text(
                   title,
+                  overflow: TextOverflow.clip,
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 SizedBox(
                   height: 5,
                 ),
-                Text(date),
+                Row(
+                  children: [Text(date), Text("${Price}")],
+                ),
                 SizedBox(
                   height: 5,
                 ),
